@@ -1,5 +1,11 @@
 const ACCESS = 'greenoxhr.accessToken';
 const REFRESH = 'greenoxhr.refreshToken';
+const API_BASE = String(import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+
+function requestUrl(path) {
+  if (!API_BASE) return path;
+  return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+}
 
 export function todayIso() {
   return new Intl.DateTimeFormat('en-CA', {
@@ -83,7 +89,7 @@ export function clearTokens() {
 }
 
 async function raw(path, { method = 'GET', body, token } = {}) {
-  const response = await fetch(path, {
+  const response = await fetch(requestUrl(path), {
     method,
     headers: {
       'content-type': 'application/json',
